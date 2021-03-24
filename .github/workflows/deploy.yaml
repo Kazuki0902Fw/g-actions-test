@@ -35,7 +35,7 @@ jobs:
         id:   lowercase_user_name
         uses: ASzc/change-string-case-action@v1
         with:
-          string: ${BRANCH_NAME}
+          string: ${PUSH_IMG_USER}
 
       - name: push image
         env:
