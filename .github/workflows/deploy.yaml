@@ -31,18 +31,11 @@ jobs:
       - name: login ghcr
         run: echo ${{secrets.GITHUB_TOKEN}}  | docker login ghcr.io -u $PUSH_IMG_USER --password-stdin
         
-      - name: lowercase user name
-        id:   lowercase_user_name
-        uses: ASzc/change-string-case-action@v1
-        with:
-          string: $PUSH_IMG_USER
-
       - name: push image
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-          RPO_USER_NAME: ${{ steps.lowercase_user_name.outputs.lowercase }}
         run: |
-          docker tag g-actions-test ghcr.io/$RPO_USER_NAME/gactionstest/gactionstest:${BRANCH_NAME}
-          docker push ghcr.io/$RPO_USER_NAME/gactionstest/gactionstest:${BRANCH_NAME}
+          docker tag g-actions-test ghcr.io/kazuki0902fw/gactionstest/gactionstest:${BRANCH_NAME}
+          docker push ghcr.io/kazuki0902fw/gactionstest/gactionstest:${BRANCH_NAME}
         
         
