@@ -36,7 +36,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
-          docker tag g-actions-test ghcr.io/$PUSH_IMG_USER/g-actions-test/g-actions-test:${BRANCH_NAME}
+          docker tag g-actions-test ghcr.io/$PUSH_IMG_USER/g_actions_test/g-actions-test:${BRANCH_NAME}
           docker push ghcr.io/$PUSH_IMG_USER/g_actions_test/g-actions-test:${BRANCH_NAME}
         
         
