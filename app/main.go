@@ -14,6 +14,16 @@ func fibonacci(n int) int {
 	return fibonacci(n-2) + fibonacci(n-1)
 }
 
+func fibonacci2(n int, memo map[int]int) int {
+	if n < 2 {
+		return n
+	}
+	if _, ok := memo[n]; !ok {
+		memo[n] = fibonacci2(n-2, memo) + fibonacci2(n-1, memo)
+	}
+	return memo[n]
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UnixNano())
 	fibN := rand.Intn(10)
