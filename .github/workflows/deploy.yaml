@@ -1,0 +1,42 @@
+name: deploy
+
+on: 
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    env:
+      PUSH_IMG_USER: Kazuki0902Fw
+    
+    steps: 
+      - name: checkout
+        uses: actions/checkout@v2
+
+      
+      - name: Extract branch name
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: extract_branch
+      
+      - name: build app
+        run: make app
+
+      - name: build image
+        run: make image
+
+      - name: login ghcr
+        run: echo ${{secrets.GITHUB_TOKEN}}  | docker login ghcr.io -u $PUSH_IMG_USER --password-stdin
+        
+
+      - name: push image
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+        run: |
+          docker tag g-actions-test ghcr.io/$PUSH_IMG_USER/g-actions-test/g-actions-test:${BRANCH_NAME}
+          docker push ghcr.io/$PUSH_IMG_USER/g-actions-test/g-actions-test:${BRANCH_NAME}
+        
+        

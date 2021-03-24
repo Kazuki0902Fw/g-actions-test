@@ -1,0 +1,19 @@
+name: test
+on: 
+  push:
+    branches:
+      - 'feature/**'
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps: 
+      - name: checkout
+        uses: actions/checkout@v2
+      
+      - name: run app test
+        run: |
+          docker-compose run --rm build-container bash -c "cd /srv/app && go test -cover ."

@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  build-container:
+    image: golang:latest
+    volumes:
+      - ./app:/srv/app:cached
+      - ./build:/srv/build:cached
+
+  
+  app:
+    image: debian:latest
+    volumes:
+      - ./build:/srv/build
+    working_dir: /srv
+    ports:
+      - "8080:8080"
+    command: bash -c "/srv/build/app"
+    
