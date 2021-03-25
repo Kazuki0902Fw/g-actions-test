@@ -47,7 +47,8 @@ jobs:
         run: |
           cd ./dest
           git config --local user.name "github-actions[bot]" 
-          echo $REMOTE_REPO
+          git add -A
+          git commit -m "generated files by $GITHUB_REPOSITORY 's commit $GITHUB_SHA "
           git branch $BRANCH_NAME
           git push $REMOTE_REPO $BRANCH_NAME
 
