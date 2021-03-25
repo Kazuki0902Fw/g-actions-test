@@ -40,6 +40,7 @@ jobs:
           REMOTE_REPO: "https://${{ secrets.PAT }}:x-oauth-basic@github.com/${{ env.DEST_REPOSITORY }}.git"
         run: |
           cd ./dest
+          git pull $REMOTE_REPO
           git config --local user.name "github-actions[bot]" 
           git add -A
           git commit -m "generated files by $GITHUB_REPOSITORY 's commit $GITHUB_SHA "
