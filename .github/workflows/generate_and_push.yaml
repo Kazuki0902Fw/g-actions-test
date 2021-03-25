@@ -39,6 +39,7 @@ jobs:
         run: |
           cd ./dest 
           git checkout -b $BRANCH_NAME
+          git pull origin $BRANCH_NAME
 
       - name: cp build
         run: |
