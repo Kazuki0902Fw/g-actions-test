@@ -40,7 +40,6 @@ jobs:
 
       - name: cp build
         run: |
-          cd ./dest 
           cp -r -f $GENERATED_DIR $COPY_DEST_DIR
 
       - name: push to remote
