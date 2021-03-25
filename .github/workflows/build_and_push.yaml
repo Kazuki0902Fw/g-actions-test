@@ -8,6 +8,7 @@ jobs:
     env:
       PUSH_IMG_USER: Kazuki0902Fw
       WORKING_DIR: /srv
+      DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products
     
     steps: 
       - name: checkout source repo
@@ -27,7 +28,7 @@ jobs:
       - name: checkout dest repo
         uses: actions/checkout@v2
         with: 
-          repository: Kazuki0902Fw/g-actions-test-products
+          repository: ${{ env.DEST_REPOSITORY }}
           path: dest
 
       - name: pwd
@@ -42,6 +43,7 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
           cd ./dest
+          git remote set-url origin https://github-actions:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}
           git branch $BRANCH_NAME
           git push origin $BRANCH_NAME
 
