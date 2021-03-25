@@ -8,8 +8,8 @@ jobs:
     env:
       DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products
       GENERATE_FILES_CMD: make app
-      GENERATED_DIR: ../build/app
-      COPY_DEST_DIR: .
+      GENERATED_DIR: ./build/app
+      COPY_DEST_DIR: dest
     
     steps: 
       - name: extract source repo branch name
@@ -34,10 +34,13 @@ jobs:
         run: cd ./dest
 
       - name: change branch
-        run: pwd && git branch $BRANCH_NAME
+        run: |
+          cd ./dest 
+          git branch $BRANCH_NAME
 
       - name: cp build
         run: |
+          cd ./dest 
           cp -r -f $GENERATED_DIR $COPY_DEST_DIR
 
       - name: push to remote
@@ -45,6 +48,7 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
           REMOTE_REPO: "https://${{ secrets.PAT }}:x-oauth-basic@github.com/${{ env.DEST_REPOSITORY }}.git"
         run: |
+          cd ./dest 
           git config --local user.name "github-actions[bot]" 
           git add -A
           git commit -m "generated files by $GITHUB_REPOSITORY 's commit $GITHUB_SHA "
