@@ -11,6 +11,10 @@ jobs:
       DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products
     
     steps: 
+      - name: set git credential
+        run: |
+          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}
+
       - name: checkout source repo
         uses: actions/checkout@v2
       
@@ -30,6 +34,7 @@ jobs:
         with: 
           repository: ${{ env.DEST_REPOSITORY }}
           path: dest
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: pwd
         run: pwd
@@ -43,7 +48,6 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
           cd ./dest
-          git remote set-url origin https://github-actions:${{secrets.GITHUB_TOKEN}}@github.com/${GITHUB_REPOSITORY}
           git branch $BRANCH_NAME
           git push origin $BRANCH_NAME
 
