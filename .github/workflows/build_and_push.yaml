@@ -46,8 +46,7 @@ jobs:
         run: |
           cd ./dest
           git config --local user.name "github-actions[bot]" 
-          git remote set-url origin https://github-actions:${{ secrets.PAT }}@github.com/${GITHUB_REPOSITORY}
-          https://${ GITHUB_ACTOR }:${{ secrets.PAT }}@github.com/${ DEST_REPOSITORY }.git
+          git remote set-url origin https://${ GITHUB_ACTOR }:${{ secrets.PAT }}@github.com/${ DEST_REPOSITORY }.git
           git branch $BRANCH_NAME
           git push origin $BRANCH_NAME
 
