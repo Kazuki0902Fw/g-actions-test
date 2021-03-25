@@ -1,0 +1,47 @@
+name: deploy
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    env:
+      PUSH_IMG_USER: Kazuki0902Fw
+      WORKING_DIR: /srv
+    
+    steps: 
+      - name: checkout source repo
+        uses: actions/checkout@v2
+      
+      - name: extract source repo branch name
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: extract_branch
+
+      - name: pwd
+        run: pwd
+      
+      - name: build app
+        run: make app
+
+      - name: checkout dest repo
+        uses: actions/checkout@v2
+        with: 
+          repository: Kazuki0902Fw/g-actions-test-products
+          path: dest
+
+      - name: pwd
+        run: pwd
+
+      - name: cp build
+        run: |
+          cp -r -f build/app dest
+
+      - name: push to remote
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+        run: |
+          cd ./dest
+          git push origin $BRANCH_NAME
+
+        
