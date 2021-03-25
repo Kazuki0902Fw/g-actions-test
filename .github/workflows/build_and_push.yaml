@@ -42,7 +42,7 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
           cd ./dest
-          git branch
+          git branch $BRANCH_NAME
           git push origin $BRANCH_NAME
 
         
