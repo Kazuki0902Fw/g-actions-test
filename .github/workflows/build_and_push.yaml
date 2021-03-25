@@ -43,7 +43,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
           DEST_REPOSITORY: ${{ env.DEST_REPOSITORY }}
-          REMOTE_REPO: https://${{ secrets.PAT }}:x-oauth-basic@github.com/${ DEST_REPOSITORY }.git
+          REMOTE_REPO: "https://${{ secrets.PAT }}:x-oauth-basic@github.com/${ env.DEST_REPOSITORY }.git"
         run: |
           cd ./dest
           git config --local user.name "github-actions[bot]" 
