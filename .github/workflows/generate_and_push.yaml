@@ -1,4 +1,4 @@
-name: build_and_push
+name: generate_and_push
 
 on: push
 
@@ -6,24 +6,22 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     env:
-      PUSH_IMG_USER: Kazuki0902Fw
-      WORKING_DIR: /srv
       DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products
+      GENERATE_FILES_CMD: make app
+      GENERATED_DIR: build/app
+      COPY_DEST_DIR: dest
     
     steps: 
-      - name: checkout source repo
-        uses: actions/checkout@v2
-      
       - name: extract source repo branch name
         shell: bash
         run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
         id: extract_branch
 
-      - name: pwd
-        run: pwd
-      
-      - name: build app
-        run: make app
+      - name: checkout source repo
+        uses: actions/checkout@v2
+    
+      - name: generate files
+        run: $GENERATE_FILES_CMD
 
       - name: checkout dest repo
         uses: actions/checkout@v2
@@ -32,17 +30,13 @@ jobs:
           path: dest
           token: ${{ secrets.PAT }}
 
-      - name: pwd
-        run: pwd
-
       - name: cp build
         run: |
-          cp -r -f build/app dest
+          cp -r -f $GENERATED_DIR $COPY_DEST_DIR
 
       - name: push to remote
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-          DEST_REPOSITORY: ${{ env.DEST_REPOSITORY }}
           REMOTE_REPO: "https://${{ secrets.PAT }}:x-oauth-basic@github.com/${{ env.DEST_REPOSITORY }}.git"
         run: |
           cd ./dest

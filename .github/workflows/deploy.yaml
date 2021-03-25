@@ -29,7 +29,7 @@ jobs:
         run: make image
 
       - name: login ghcr
-        run: echo ${{secrets.GITHUB_TOKEN}}  | docker login ghcr.io -u $PUSH_IMG_USER --password-stdin
+        run: echo ${{ secrets.GITHUB_TOKEN }}  | docker login ghcr.io -u ${PUSH_IMG_USER} --password-stdin
         
       - name: push image
         env:
