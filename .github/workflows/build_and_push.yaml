@@ -30,7 +30,7 @@ jobs:
         with: 
           repository: ${{ env.DEST_REPOSITORY }}
           path: dest
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
 
       - name: pwd
         run: pwd
@@ -44,7 +44,7 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
           cd ./dest
-          git remote set-url origin https://github-actions:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}
+          git remote set-url origin https://github-actions:${{ secrets.PAT }}@github.com/${GITHUB_REPOSITORY}
           git branch $BRANCH_NAME
           git push origin $BRANCH_NAME
 
