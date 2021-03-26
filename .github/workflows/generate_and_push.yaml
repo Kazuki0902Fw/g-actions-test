@@ -3,6 +3,8 @@ name: generate_and_push
 
 on: 
   push:
+    branches-ignore:
+      - '**-no-ci'
     paths:
     # 以下の表現にマッチするファイルの変更がpushされた時のみjobが実行される
     # ref: https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
