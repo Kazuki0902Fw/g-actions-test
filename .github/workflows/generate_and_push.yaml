@@ -57,6 +57,7 @@ jobs:
       - name: pull dest repo remote branch if needs
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+          GIT_SSH_COMMAND: ssh -i ~/id_rsa
         if: steps.check_remote_branch_exists.outputs.exists
         run: |
           cd ./dest
