@@ -30,9 +30,11 @@ jobs:
         env: 
           DEST_REPOSITORY_DEPLOY_KEY: ${{ secrets.DEST_REPOSITORY_DEPLOY_KEY }}
         run: |
+          echo $DEST_REPOSITORY_DEPLOY_KEY > ~/id_rsa
+          chmod 0600 ~/id_rsa
           eval "$(ssh-agent)"
           ssh-agent -a /tmp/ssh_agent.sock > /dev/null
-          ssh-add - <<< "$DEST_REPOSITORY_DEPLOY_KEY"
+          ssh-add ~/id_rsa
 
       - name: clone dest repo
         run: git clone git@github.com:$DEST_REPOSITORY.git dest
@@ -40,6 +42,7 @@ jobs:
       - name: checkout dest repo branch
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           cd ./dest 
           git checkout -b $BRANCH_NAME
@@ -68,6 +71,7 @@ jobs:
       - name: push to remote
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           cd ./dest 
           git config --local user.name "github-actions[bot]" 
@@ -77,4 +81,11 @@ jobs:
           git branch
           git push origin $BRANCH_NAME
 
+      - name: cleanup
+        if: always()
+        env:
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        run: |
+          ssh-add -D
+          rm -Rf *
         
