@@ -52,7 +52,7 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
           git ls-remote --heads origin $BRANCH_NAME
-          echo "::set-output name=exists::git ls-remote --heads origin $BRANCH_NAME}"
+          echo "::set-output name=exists::$(git ls-remote --heads origin $BRANCH_NAME)"
       
       - name: pull dest repo remote branch if needs
         env:
