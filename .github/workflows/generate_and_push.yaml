@@ -49,6 +49,7 @@ jobs:
         name: check remote branch exists in dest repo
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+          GIT_SSH_COMMAND: ssh -i ~/id_rsa
         run: |
           cd $PATH_TO_DEST_REPO 
           branches=$(git ls-remote --heads origin $BRANCH_NAME)
