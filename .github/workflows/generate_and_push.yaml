@@ -30,6 +30,7 @@ jobs:
         env: 
           DEST_REPOSITORY_DEPLOY_KEY: ${{ secrets.DEST_REPOSITORY_DEPLOY_KEY }}
         run: |
+          eval "$(ssh-agent)"
           ssh-agent -a /tmp/ssh_agent.sock > /dev/null
           ssh-add - <<< "$DEST_REPOSITORY_DEPLOY_KEY"
 
