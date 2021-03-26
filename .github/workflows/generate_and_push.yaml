@@ -49,6 +49,7 @@ jobs:
         id: check_remote_branch_exists
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+        shell: bash
         run: |
           git ls-remote --heads origin $BRANCH_NAME
           echo "::set-output name=exists::$(git ls-remote --heads origin $BRANCH_NAME)"

@@ -16,7 +16,7 @@ func fibonacci(n int) int {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	rand.Seed(time.Now().UnixNano())
-	fibN := rand.Intn(10)
+	fibN := rand.Intn(9)
 	fmt.Fprintf(w, "hello fibonacci(%d): %d", fibN, fibonacci(fibN))
 }
 
