@@ -30,8 +30,8 @@ jobs:
         env: 
           DEST_REPOSITORY_DEPLOY_KEY: ${{ secrets.DEST_REPOSITORY_DEPLOY_KEY }}
         run: |
-          echo $DEST_REPOSITORY_DEPLOY_KEY > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          ssh-agent -a /tmp/ssh_agent.sock > /dev/null
+          ssh-add - <<< "$DEST_REPOSITORY_DEPLOY_KEY"
 
       - name: clone dest repo
         run: git clone git@github.com:$DEST_REPOSITORY.git dest
