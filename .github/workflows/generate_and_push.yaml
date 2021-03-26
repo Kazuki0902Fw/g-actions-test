@@ -15,8 +15,7 @@ jobs:
     env:
       DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products # 生成物をpushするrepository
       GENERATE_FILES_CMD: make app # ファイル生成するためにsource repositoryで実行する必要があるコマンド
-      GENERATED_PATH: ./build/app # 生成物の配置場所
-      COPY_DEST_DIR: dest         # 生成物のコピー先
+      COPY_FILES_CMD: cp -rf build/app dest # 生成したファイルをコピーするコマンド。destはcloneしてきたdest repositoryの配置先を示す
     
     steps: 
       - name: checkout source repo
@@ -63,12 +62,10 @@ jobs:
           cd ./dest
           git pull origin $BRANCH_NAME
 
-      - name: generate files
-        run: $GENERATE_FILES_CMD
-
-      - name: cp generate files
-        run: |
-          cp -r -f $GENERATED_PATH $COPY_DEST_DIR
+      - name: generate and copy files
+        run: | 
+          $GENERATE_FILES_CMD
+          $COPY_FILES_CMD
 
       - name: push to remote
         env:
