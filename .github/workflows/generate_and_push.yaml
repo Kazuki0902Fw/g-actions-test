@@ -16,7 +16,7 @@ jobs:
       DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products # 生成物をpushするrepository
       PATH_TO_DEST_REPO: ./dest                             # cloneしてきたDEST_REPOSITORYの配置場所
       GENERATE_FILES_CMD: make app                          # ファイル生成するためにsource repositoryで実行する必要があるコマンド
-      COPY_FILES_CMD: rm build/app && cp -rf build/app $PATH_TO_DEST_REPO   # 生成したファイルをコピーするコマンド
+      COPY_FILES_CMD: rm $PATH_TO_DEST_REPO/app && cp -rf build/app $PATH_TO_DEST_REPO   # 生成したファイルをコピーするコマンド
     
     steps: 
       - name: checkout source repo
