@@ -14,8 +14,9 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products # 生成物をpushするrepository
-      GENERATE_FILES_CMD: make app # ファイル生成するためにsource repositoryで実行する必要があるコマンド
-      COPY_FILES_CMD: cp -rf build/app dest # 生成したファイルをコピーするコマンド。destはcloneしてきたdest repositoryの配置先を示す
+      PATH_TO_DEST_REPO: ./dest                             # cloneしてきたDEST_REPOSITORYの配置場所
+      GENERATE_FILES_CMD: make app                          # ファイル生成するためにsource repositoryで実行する必要があるコマンド
+      COPY_FILES_CMD: cp -rf build/app $PATH_TO_DEST_REPO   # 生成したファイルをコピーするコマンド
     
     steps: 
       - name: checkout source repo
@@ -41,14 +42,15 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
-          cd ./dest 
+          cd $PATH_TO_DEST_REPO 
           git checkout -b $BRANCH_NAME
 
-      - id: check_remote_branch_exists
-        name: check remote branch exists
+      - id: check_dest_repo_remote_branch_exists
+        name: check remote branch exists in dest repo
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
+          cd $PATH_TO_DEST_REPO 
           branches=$(git ls-remote --heads origin $BRANCH_NAME)
           branches="${branches//$'\n'/\\n}"
           echo "::set-output name=exists::$branches"
@@ -57,9 +59,9 @@ jobs:
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
           GIT_SSH_COMMAND: ssh -i ~/id_rsa
-        if: steps.check_remote_branch_exists.outputs.exists
+        if: steps.check_dest_repo_remote_branch_exists.outputs.exists
         run: |
-          cd ./dest
+          cd $PATH_TO_DEST_REPO 
           git pull origin $BRANCH_NAME
 
       - name: generate and copy files
@@ -72,7 +74,7 @@ jobs:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
           GIT_SSH_COMMAND: ssh -i ~/id_rsa
         run: |
-          cd ./dest 
+          cd $PATH_TO_DEST_REPO 
           git config --local user.name "github-actions[bot]" 
           git config --local user.email "github-actions[bot]" 
           git add -A
@@ -83,6 +85,6 @@ jobs:
       - name: cleanup
         if: always()
         run: |
-          rm -f ~/id_rsa
-          rm -Rf *
+          sudo rm -f ~/id_rsa
+          sudo rm -Rf *
         
