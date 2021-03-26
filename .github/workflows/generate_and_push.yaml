@@ -46,10 +46,9 @@ jobs:
           git checkout -b $BRANCH_NAME
 
       - name: check remote branch exists
-        id: check_remote_branch_exists
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-        shell: bash
+        id: check_remote_branch_exists
         run: |
           git ls-remote --heads origin $BRANCH_NAME
           branches=$(git ls-remote --heads origin $BRANCH_NAME)
@@ -57,6 +56,12 @@ jobs:
           echo $branches
           echo "::set-output name=exists::${branches}"
           echo "::set-output name=random-id::pppp"
+
+      - id: test_id
+        name: test_name
+        run: echo "::set-output name=test::hoge"
+
+      - run: echo "${{ steps.test_id.outputs.test }}"
 
       - name: check output
         run: |
