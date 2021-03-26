@@ -50,7 +50,9 @@ jobs:
         id: check_remote_branch_exists
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-        run: echo "::set-output name=exists::git ls-remote --heads origin $BRANCH_NAME}"
+        run: |
+          git ls-remote --heads origin $BRANCH_NAME
+          echo "::set-output name=exists::git ls-remote --heads origin $BRANCH_NAME}"
       
       - name: pull dest repo remote branch if needs
         env:
@@ -83,7 +85,6 @@ jobs:
       - name: cleanup
         if: always()
         run: |
-          ssh-add -D
           rm -f ~/id_rsa
           rm -Rf *
         
