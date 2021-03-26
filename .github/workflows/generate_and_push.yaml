@@ -52,9 +52,11 @@ jobs:
         run: |
           git ls-remote --heads origin $BRANCH_NAME
           echo "::set-output name=exists::$(git ls-remote --heads origin $BRANCH_NAME)"
+          echo "::set-output name=random-id::$(echo $BRANCH_NAME)"
 
       - name: check output
         run: |
+          echo ${{ steps.check_remote_branch_exists.random-id }}
           echo ${{ steps.check_remote_branch_exists.exists }}
       
       - name: pull dest repo remote branch if needs
