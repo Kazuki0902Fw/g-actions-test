@@ -1,60 +1,79 @@
+# このworkflowは特定の
 name: generate_and_push
 
-on: push
+on: 
+  push:
+    paths:
+    # 以下の表現にマッチするファイルの変更がpushされた時のみjobが実行される
+    # ref: https://docs.github.com/ja/actions/reference/workflow-syntax-for-github-actions#patterns-to-match-branches-and-tags
+    - 'app/**/**.go' 
 
 jobs:
+
   deploy:
     runs-on: ubuntu-20.04
     env:
-      DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products
-      GENERATE_FILES_CMD: make app
-      GENERATED_DIR: ./build/app
-      COPY_DEST_DIR: dest
+      DEST_REPOSITORY: Kazuki0902Fw/g-actions-test-products # 生成物をpushするrepository
+      GENERATE_FILES_CMD: make app # ファイル生成するためにsource repositoryで実行する必要があるコマンド
+      GENERATED_PATH: ./build/app # 生成物の配置場所
+      COPY_DEST_DIR: dest         # 生成物のコピー先
     
     steps: 
-      - name: extract source repo branch name
-        shell: bash
-        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
-        id: extract_branch
-
       - name: checkout source repo
         uses: actions/checkout@v2
-    
-      - name: generate files
-        run: $GENERATE_FILES_CMD
 
-      - name: checkout dest repo
-        uses: actions/checkout@v2
-        with: 
-          repository: ${{ env.DEST_REPOSITORY }}
-          path: dest
-          token: ${{ secrets.PAT }}
+      - name: extract source repo branch name
+        id: extract_branch
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
 
-      - name: change dir
-        run: cd ./dest
+      - name: set deploy key for dest repo
+        env: 
+          DEST_REPOSITORY_DEPLOY_KEY: ${{ secrets.DEST_REPOSITORY_DEPLOY_KEY }}
+        run: |
+          echo $DEST_REPOSITORY_DEPLOY_KEY > ~/deploy_key.pem
+          chmod 600 ~/deploy_key.pem
 
-      - name: change branch
+      - name: clone dest repo
+        run: git clone $DEST_REPOSITORY dest
+
+      - name: checkout dest repo branch
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         run: |
           cd ./dest 
           git checkout -b $BRANCH_NAME
+
+      - name: check remote branch exists
+        id: check_remote_branch_exists
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+        run: echo "::set-output name=exists::git ls-remote --heads origin $BRANCH_NAME}"
+      
+      - name: pull dest repo remote branch if needs
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
+        if: steps.check_remote_branch_exists.exists
+        run: |
+          cd ./dest
           git pull origin $BRANCH_NAME
 
-      - name: cp build
+      - name: generate files
+        run: $GENERATE_FILES_CMD
+
+      - name: cp generate files
         run: |
-          cp -r -f $GENERATED_DIR $COPY_DEST_DIR
+          cp -r -f $GENERATED_PATH $COPY_DEST_DIR
 
       - name: push to remote
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-          REMOTE_REPO: "https://${{ secrets.PAT }}:x-oauth-basic@github.com/${{ env.DEST_REPOSITORY }}.git"
         run: |
           cd ./dest 
           git config --local user.name "github-actions[bot]" 
+          git config --local user.email "github-actions[bot]" 
           git add -A
-          git commit -m "generated files by $GITHUB_REPOSITORY 's commit $GITHUB_SHA "
+          git commit -m "add generated files by $GITHUB_REPOSITORY 's github actions triggered by pushing commit $GITHUB_SHA "
           git branch
-          git push $REMOTE_REPO $BRANCH_NAME
+          git push origin $BRANCH_NAME
 
         
