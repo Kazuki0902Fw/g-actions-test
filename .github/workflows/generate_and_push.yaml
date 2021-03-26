@@ -55,8 +55,8 @@ jobs:
           branches=$(git ls-remote --heads origin $BRANCH_NAME)
           branches="${branches//$'\n'/\\n}"
           echo $branches
-          echo "::set-output name=exists::$branches"
-          echo "::set-output name=random-id::$BRANCH_NAME"
+          echo "::set-output name=exists::${branches}"
+          echo "::set-output name=random-id::pppp"
 
       - name: check output
         run: |
