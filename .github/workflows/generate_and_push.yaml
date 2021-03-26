@@ -57,9 +57,15 @@ jobs:
           echo "::set-output name=exists::${branches}"
           echo "::set-output name=random-id::pppp"
 
+          echo "::set-output name=test::$branches"
+
+
+
       - id: test_id
+        env:
+          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
         name: test_name
-        run: echo "::set-output name=test::hoge"
+        run: echo "::set-output name=test::$BRANCH_NAME"
 
       - run: echo "${{ steps.test_id.outputs.test }}"
 
