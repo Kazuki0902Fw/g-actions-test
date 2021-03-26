@@ -22,8 +22,8 @@ jobs:
       - name: checkout source repo
         uses: actions/checkout@v2
 
-      - name: extract source repo branch name
-        id: extract_branch
+      - id: extract_branch
+        name: extract source repo branch name
         run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
 
       - name: set deploy key for dest repo
@@ -45,39 +45,19 @@ jobs:
           cd ./dest 
           git checkout -b $BRANCH_NAME
 
-      - name: check remote branch exists
+      - id: check_remote_branch_exists
+        name: check remote branch exists
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-        id: check_remote_branch_exists
         run: |
-          git ls-remote --heads origin $BRANCH_NAME
           branches=$(git ls-remote --heads origin $BRANCH_NAME)
           branches="${branches//$'\n'/\\n}"
-          echo $branches
-          echo "::set-output name=exists::${branches}"
-          echo "::set-output name=random-id::pppp"
+          echo "::set-output name=exists::$branches"
 
-          echo "::set-output name=test::$branches"
-
-
-
-      - id: test_id
-        env:
-          BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-        name: test_name
-        run: echo "::set-output name=test::$BRANCH_NAME"
-
-      - run: echo "${{ steps.test_id.outputs.test }}"
-
-      - name: check output
-        run: |
-          echo ${{ steps.check_remote_branch_exists.random-id }}
-          echo ${{ steps.check_remote_branch_exists.exists }}
-      
       - name: pull dest repo remote branch if needs
         env:
           BRANCH_NAME: ${{ steps.extract_branch.outputs.branch }}
-        if: steps.check_remote_branch_exists.exists
+        if: steps.check_remote_branch_exists.outputs.exists
         run: |
           cd ./dest
           git pull origin $BRANCH_NAME
