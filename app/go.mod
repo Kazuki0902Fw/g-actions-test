@@ -1,4 +1,4 @@
-module github.com/Kazuki0902Fw/g-action-test
+module github.com/Kazuki0902Fw/g-actions-test
 
 go 1.14
 
