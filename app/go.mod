@@ -1,4 +1,4 @@
-module gactiontest
+module github.com/Kazuki0902Fw/g-action-test
 
 go 1.14
 
